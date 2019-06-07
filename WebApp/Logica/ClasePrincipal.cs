@@ -50,9 +50,16 @@ namespace Logica
             return NuevaRespuesta;
         }
         */
-        
+
 
         //----------------------------------USUARIOS-----------------------------------------------------------------
+        public void CargarUsuarios(Usuario NuevoUsuario)
+        {
+            Usuario usuario = new Usuario();
+            usuario = NuevoUsuario;
+            ListaUsuarios.Add(usuario);
+            GuardarUsuarios();
+        }//metodo que se usa en las altas para cargar
         public void GuardarUsuarios()
         {
             using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Usuarios.txt", false))
@@ -72,8 +79,16 @@ namespace Logica
                 }
             }
             return ListaUsuarios;
-        }
+        } //metodo para devolver lista de archivo
         //----------------------------------DOCENTES------------------------------------------------------------------
+        public void CargarDocentes(Docente NuevoDocente)  
+        {
+            NuevoDocente.Id = ListaDocentes.Count() + 1;
+            Docente docente = new Docente();
+            docente = NuevoDocente;
+            ListaDocentes.Add(docente);
+            GuardarDocentes();
+        } 
         public void GuardarDocentes()
         {
             using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Docentes.txt", false))
@@ -95,6 +110,14 @@ namespace Logica
             return ListaDocentes;
         }
         //----------------------------------PADRES----------------------------------------------------------------------
+        public void CargarPadres(Padre NuevoPadre)
+        {
+            NuevoPadre.Id = ListaPadres.Count() + 1;
+            Padre padre = new Padre();
+            padre = NuevoPadre;
+            ListaPadres.Add(padre);
+            GuardarPadres();
+        }
         public void GuardarPadres()
         {
             using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Padres.txt", false))
@@ -116,6 +139,14 @@ namespace Logica
             return ListaPadres;
         }
         //----------------------------------HIJOS-----------------------------------------------------------------------
+        public void CargarHijos(Hijo NuevoHijo)
+        {
+            NuevoHijo.Id = ListaHijos.Count() + 1;
+            Hijo hijo = new Hijo();
+            hijo = NuevoHijo;
+            ListaHijos.Add(hijo);
+            GuardarHijos();
+        }
         public void GuardarHijos()
         {
             using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Hijos.txt", false))
@@ -137,6 +168,14 @@ namespace Logica
             return ListaHijos;
         }
         //----------------------------------DIRECTORES------------------------------------------------------------------
+        public void CargarDirectores(Directora NuevoDirector)
+        {
+            NuevoDirector.Id = ListaDirectores.Count() + 1;
+            Directora director = new Directora();
+            director = NuevoDirector;
+            ListaDirectores.Add(director);
+            GuardarDirectores();
+        }
         public void GuardarDirectores()
         {
             using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Directores.txt", false))
@@ -158,6 +197,14 @@ namespace Logica
             return ListaDirectores;
         }
         //----------------------------------NOTAS-----------------------------------------------------------------------
+        public void CargarNotas(Nota NuevaNota)
+        {
+            NuevaNota.Id = ListaNotas.Count() + 1;
+            Nota nota = new Nota();
+            nota = NuevaNota;
+            ListaNotas.Add(nota);
+            GuardarNotas();
+        }
         public void GuardarNotas()
         {
             using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Notas.txt", false))
