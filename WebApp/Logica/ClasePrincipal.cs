@@ -17,6 +17,7 @@ namespace Logica
         List<Padre> ListaPadres = new List<Padre>();
         List<Hijo> ListaHijos = new List<Hijo>();
         List<Nota> ListaNotas = new List<Nota>();
+        List<Clave> ListaClaves = new List<Clave>();
 
         /*
         public Respuesta CrearArchivos()
@@ -240,6 +241,36 @@ namespace Logica
                 }
             }
             return ListaNotas;
+        }
+
+        //----------------------------------CLAVES-----------------------------------------------------------------------
+        public void CargarClave(Clave NuevaClave)
+        {
+            Clave clave = NuevaClave;
+            ListaClaves.Add(clave);
+            GuardarClaves();
+        }
+
+        public void GuardarClaves()
+        {
+            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Claves.txt", false))
+            {
+                escritura.Write(JsonConvert.SerializeObject(ListaClaves));
+            }
+        }
+
+        public List<Clave> LeerClaves()
+        {
+            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Claves.txt"))
+            {
+                string contenido = lectura.ReadToEnd();
+                ListaClaves = JsonConvert.DeserializeObject<List<Clave>>(contenido);
+                if (ListaClaves == null)
+                {
+                    ListaClaves = new List<Clave>();
+                }
+            }
+            return ListaClaves;
         }
 
         //---------------------------ABM Directores---------------------------------------------
