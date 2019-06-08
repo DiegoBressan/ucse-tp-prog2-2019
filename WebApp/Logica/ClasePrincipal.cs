@@ -277,16 +277,7 @@ namespace Logica
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
             Usuario nuevousuario = null;
-            List<string> mensaje = new List<string>();
-            //Pregunto si existen usuarios para obtener el ID
-            if (LeerUsuarios() == null)
-            {
-                directora.Id = 1;
-            }
-            else
-            {
-                directora.Id = LeerUsuarios().Count + 1;
-            }
+            directora.Id = LeerUsuarios().Count + 1;
 
             //Pregunto si tiene el Roll de Director
             if (usuarioLogueado.RolSeleccionado == Roles.Directora)
@@ -301,27 +292,41 @@ namespace Logica
 
                 }
             }
-            else
-            {
-                mensaje.Add("No tiene autorización requerida");
-            }
 
-            return new Resultado() { Errores = mensaje };
+            return new Resultado();
         }
 
         public Resultado EditarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Usuario nuevoUsuario = new Usuario()
+            {
+                Id = id,
+                Nombre = directora.Nombre,
+                Apellido = directora.Apellido,
+                Email= directora.Email
+            };
+            
+            // Busca el director y lo borra de los archivos
+            LeerDirectores().RemoveAll(x => x.Id == directora.Id);
+            LeerUsuarios().RemoveAll(x => x.Id == directora.Id);
+
+            // Busca el director y lo guarda en los archivos
+            LeerDirectores().Add(directora);
+            LeerUsuarios().Add(nuevoUsuario);
+
+            return new Resultado();
         }
 
         public Resultado EliminarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
         {
+            // Busca el director y lo borra de los archivos
             LeerDirectores().RemoveAll(x => x.Id == directora.Id);
             LeerUsuarios().RemoveAll(x => x.Id == directora.Id);
+
+            GuardarUsuarios();
+            GuardarDirectores();
             
-            List<string> mensaje = new List<string>();
-            mensaje.Add("Se elimino correctamente");
-            return new Resultado() { Errores = mensaje };
+            return new Resultado();
         }
 
         //---------------------------ABM Docentes---------------------------------------------
@@ -329,19 +334,10 @@ namespace Logica
         public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
         {
             Usuario nuevousuario = null;
-            List<string> mensaje = new List<string>();
-            //Pregunto si existen usuarios para obtener el ID
-            if (LeerUsuarios() == null)
-            {
-                docente.Id = 1;
-            }
-            else
-            {
-                docente.Id = LeerUsuarios().Count + 1;
-            }
+            docente.Id = LeerUsuarios().Count + 1;
 
             //Pregunto si tiene el Roll de Docente
-            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+            if (usuarioLogueado.RolSeleccionado == Roles.Docente)
             {
                 if (LeerUsuarios() != null) //Busco si existe el docente
                 {
@@ -353,27 +349,41 @@ namespace Logica
 
                 }
             }
-            else
-            {
-                mensaje.Add("No tiene autorización requerida");
-            }
 
-            return new Resultado() { Errores = mensaje };
+            return new Resultado();
         }
 
         public Resultado EditarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Usuario nuevoUsuario = new Usuario()
+            {
+                Id = id,
+                Nombre = docente.Nombre,
+                Apellido = docente.Apellido,
+                Email = docente.Email
+            };
+
+            // Busca el docente y lo borra de los archivos
+            LeerDocentes().RemoveAll(x => x.Id == docente.Id);
+            LeerUsuarios().RemoveAll(x => x.Id == docente.Id);
+
+            // Busca el docente y lo guarda en los archivos
+            LeerDocentes().Add(docente);
+            LeerUsuarios().Add(nuevoUsuario);
+
+            return new Resultado();
         }
 
         public Resultado EliminarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
         {
-            LeerDirectores().RemoveAll(x => x.Id == docente.Id);
+            // Busca al docente y lo borra de los archivos
+            LeerDocentes().RemoveAll(x => x.Id == docente.Id);
             LeerUsuarios().RemoveAll(x => x.Id == docente.Id);
 
-            List<string> mensaje = new List<string>();
-            mensaje.Add("Se elimino correctamente");
-            return new Resultado() { Errores = mensaje };
+            GuardarDocentes();
+            GuardarUsuarios();
+
+            return new Resultado();
         }
 
         //---------------------------ABM Padres---------------------------------------------
@@ -381,19 +391,10 @@ namespace Logica
         public Resultado AltaPadreMadre(Padre padre, UsuarioLogueado usuarioLogueado)
         {
             Usuario nuevousuario = null;
-            List<string> mensaje = new List<string>();
-            //Pregunto si existen usuarios para obtener el ID
-            if (LeerUsuarios() == null)
-            {
-                padre.Id = 1;
-            }
-            else
-            {
-                padre.Id = LeerUsuarios().Count + 1;
-            }
+            padre.Id = LeerUsuarios().Count + 1;
 
             //Pregunto si tiene el Roll de Padre
-            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+            if (usuarioLogueado.RolSeleccionado == Roles.Padre)
             {
                 if (LeerUsuarios() != null) //Busco si existe el padre
                 {
@@ -405,27 +406,41 @@ namespace Logica
 
                 }
             }
-            else
-            {
-                mensaje.Add("No tiene autorización requerida");
-            }
 
-            return new Resultado() { Errores = mensaje };
+            return new Resultado();
         }
 
         public Resultado EditarPadreMadre(int id, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Usuario nuevoUsuario = new Usuario()
+            {
+                Id = id,
+                Nombre = padre.Nombre,
+                Apellido = padre.Apellido,
+                Email = padre.Email
+            };
+
+            // Busca el padre y lo borra de los archivos
+            LeerPadres().RemoveAll(x => x.Id == padre.Id);
+            LeerUsuarios().RemoveAll(x => x.Id == padre.Id);
+
+            // Busca el padre y lo guarda en los archivos
+            LeerPadres().Add(padre);
+            LeerUsuarios().Add(nuevoUsuario);
+
+            return new Resultado();
         }
 
         public Resultado EliminarPadreMadre(int id, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            LeerDirectores().RemoveAll(x => x.Id == padre.Id);
+            // Busca el padre y lo borra de los archivos
+            LeerPadres().RemoveAll(x => x.Id == padre.Id);
             LeerUsuarios().RemoveAll(x => x.Id == padre.Id);
 
-            List<string> mensaje = new List<string>();
-            mensaje.Add("Se elimino correctamente");
-            return new Resultado() { Errores = mensaje };
+            GuardarUsuarios();
+            GuardarPadres();
+
+            return new Resultado();
         }
 
         //---------------------------ABM Hijos---------------------------------------------
@@ -437,17 +452,35 @@ namespace Logica
 
         public Resultado EditarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Usuario nuevoUsuario = new Usuario()
+            {
+                Id = id,
+                Nombre = hijo.Nombre,
+                Apellido = hijo.Apellido,
+                Email = hijo.Email
+            };
+
+            // Busca el hijo y lo borra de los archivos
+            LeerHijos().RemoveAll(x => x.Id == hijo.Id);
+            LeerUsuarios().RemoveAll(x => x.Id == hijo.Id);
+
+            // Busca el hijo y lo guarda en los archivos
+            LeerHijos().Add(hijo);
+            LeerUsuarios().Add(nuevoUsuario);
+
+            return new Resultado();
         }
 
         public Resultado EliminarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
-        {
-            LeerDirectores().RemoveAll(x => x.Id == hijo.Id);
+        { 
+            // Busca el alumno y lo borra de los archivos
+            LeerHijos().RemoveAll(x => x.Id == hijo.Id);
             LeerUsuarios().RemoveAll(x => x.Id == hijo.Id);
 
-            List<string> mensaje = new List<string>();
-            mensaje.Add("Se elimino correctamente");
-            return new Resultado() { Errores = mensaje };
+            GuardarHijos();
+            GuardarUsuarios();
+
+            return new Resultado();
         }
 
         //---------------------------Asignar/Desasignar---------------------------------------------
