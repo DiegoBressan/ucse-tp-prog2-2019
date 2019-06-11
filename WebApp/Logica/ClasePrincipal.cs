@@ -48,9 +48,14 @@ namespace Logica
             {
                 File.Create(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Notas.txt").Close();
             }
+            if (File.Exists(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Claves.txt"))
+            {
+                File.Create(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Claves.txt").Close();
+            }
             return NuevaRespuesta;
         }
         */
+        
 
         //----------------------------------USUARIOS-----------------------------------------------------------------
         public void CargarUsuarios(Usuario NuevoUsuario)
@@ -59,7 +64,7 @@ namespace Logica
             usuario = NuevoUsuario;
             ListaUsuarios.Add(usuario);
             GuardarUsuarios();
-        }//metodo que se usa en las altas para cargar
+        }
 
         public void GuardarUsuarios()
         {
@@ -81,15 +86,12 @@ namespace Logica
                 }
             }
             return ListaUsuarios;
-        } //metodo para devolver lista de archivo
+        } 
 
         //----------------------------------DOCENTES------------------------------------------------------------------
         public void CargarDocentes(Docente NuevoDocente)  
         {
-            NuevoDocente.Id = ListaDocentes.Count() + 1;
-            Docente docente = new Docente();
-            docente = NuevoDocente;
-            ListaDocentes.Add(docente);
+            ListaDocentes.Add(NuevoDocente);
             GuardarDocentes();
         } 
 
@@ -118,10 +120,7 @@ namespace Logica
         //----------------------------------PADRES----------------------------------------------------------------------
         public void CargarPadres(Padre NuevoPadre)
         {
-            NuevoPadre.Id = ListaPadres.Count() + 1;
-            Padre padre = new Padre();
-            padre = NuevoPadre;
-            ListaPadres.Add(padre);
+            ListaPadres.Add(NuevoPadre);
             GuardarPadres();
         }
 
@@ -150,10 +149,7 @@ namespace Logica
         //----------------------------------HIJOS-----------------------------------------------------------------------
         public void CargarHijos(Hijo NuevoHijo)
         {
-            NuevoHijo.Id = ListaHijos.Count() + 1;
-            Hijo hijo = new Hijo();
-            hijo = NuevoHijo;
-            ListaHijos.Add(hijo);
+            ListaHijos.Add(NuevoHijo);
             GuardarHijos();
         }
 
@@ -182,10 +178,7 @@ namespace Logica
         //----------------------------------DIRECTORES------------------------------------------------------------------
         public void CargarDirectores(Directora NuevoDirector)
         {
-            NuevoDirector.Id = ListaDirectores.Count() + 1;
-            Directora director = new Directora();
-            director = NuevoDirector;
-            ListaDirectores.Add(director);
+            ListaDirectores.Add(NuevoDirector);
             GuardarDirectores();
         }
 
@@ -214,10 +207,7 @@ namespace Logica
         //----------------------------------NOTAS-----------------------------------------------------------------------
         public void CargarNotas(Nota NuevaNota)
         {
-            NuevaNota.Id = ListaNotas.Count() + 1;
-            Nota nota = new Nota();
-            nota = NuevaNota;
-            ListaNotas.Add(nota);
+            ListaNotas.Add(NuevaNota);
             GuardarNotas();
         }
 
@@ -246,8 +236,7 @@ namespace Logica
         //----------------------------------CLAVES-----------------------------------------------------------------------
         public void CargarClave(Clave NuevaClave)
         {
-            Clave clave = NuevaClave;
-            ListaClaves.Add(clave);
+            ListaClaves.Add(NuevaClave);
             GuardarClaves();
         }
 
@@ -276,10 +265,11 @@ namespace Logica
         //---------------------------ABM Directores---------------------------------------------
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
+            Resultado NuevoResultado = new Resultado();
             Usuario nuevousuario = null;
             directora.Id = LeerUsuarios().Count + 1;
 
-            //Pregunto si tiene el Roll de Director
+            //Pregunto si tiene el Roll de Directora
             if (usuarioLogueado.RolSeleccionado == Roles.Directora)
             {
                 if (LeerUsuarios() != null) //Busco si existe el director
@@ -287,17 +277,38 @@ namespace Logica
                     nuevousuario = LeerUsuarios().Where(x => x.Email == directora.Email).FirstOrDefault();
                 }
 
-                if (nuevousuario != null)
-                {
+                if (nuevousuario == null) //No existe, cargo uno nuevo
+                {                  
+                    Clave NuevaClave = new Clave();
+                    NuevaClave.Id = directora.Id;
+                    NuevaClave.Email = directora.Email;
+                    NuevaClave.Roles = new Roles2[] { Roles2.Directora };
 
+                    CargarClave(NuevaClave); //Cargo la nueva clave generada
+                    CargarUsuarios(directora); //Cargo un nuevo usuario
+                    CargarDirectores(directora); //Cargo un nuevo director                    
+                }
+                else
+                {
+                    NuevoResultado.Errores.Add("El usuario ya existe");
                 }
             }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso");
+            }
 
-            return new Resultado();
+            return NuevoResultado;
         }
 
         public Resultado EditarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
         {
+            Directora NuevaDirectora = ObtenerDirectoraPorId(usuarioLogueado, id);
+            NuevaDirectora = directora;
+
+            Clave NuevaClave = LeerClaves().Where(x => x.Id == id).FirstOrDefault();
+            NuevaClave.Email = directora.Email;
+           
             Usuario nuevoUsuario = new Usuario()
             {
                 Id = id,
@@ -309,10 +320,12 @@ namespace Logica
             // Busca el director y lo borra de los archivos
             LeerDirectores().RemoveAll(x => x.Id == directora.Id);
             LeerUsuarios().RemoveAll(x => x.Id == directora.Id);
+            LeerClaves().RemoveAll(x => x.Id == directora.Id);
 
             // Busca el director y lo guarda en los archivos
-            LeerDirectores().Add(directora);
-            LeerUsuarios().Add(nuevoUsuario);
+            CargarDirectores(NuevaDirectora);
+            CargarUsuarios(nuevoUsuario);
+            CargarClave(NuevaClave);
 
             return new Resultado();
         }
@@ -333,28 +346,50 @@ namespace Logica
 
         public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
         {
+            Resultado NuevoResultado = new Resultado();
             Usuario nuevousuario = null;
             docente.Id = LeerUsuarios().Count + 1;
 
-            //Pregunto si tiene el Roll de Docente
-            if (usuarioLogueado.RolSeleccionado == Roles.Docente)
+            //Pregunto si tiene el Roll de Directora
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
             {
                 if (LeerUsuarios() != null) //Busco si existe el docente
                 {
                     nuevousuario = LeerUsuarios().Where(x => x.Email == docente.Email).FirstOrDefault();
                 }
 
-                if (nuevousuario != null)
+                if (nuevousuario == null) //No existe, cargo uno nuevo
                 {
+                    Clave NuevaClave = new Clave();
+                    NuevaClave.Id = docente.Id;
+                    NuevaClave.Email = docente.Email;
+                    NuevaClave.Roles = new Roles2[] { Roles2.Docente };
 
+                    CargarClave(NuevaClave); //Cargo la nueva clave generada
+                    CargarUsuarios(docente); //Cargo un nuevo usuario
+                    CargarDocentes(docente); //Cargo un nuevo docente      
+                }
+                else
+                {
+                    NuevoResultado.Errores.Add("El usuario ya existe");
                 }
             }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso");
+            }
 
-            return new Resultado();
+            return NuevoResultado;
         }
 
         public Resultado EditarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
         {
+            Docente NuevoDocente = ObtenerDocentePorId(usuarioLogueado, id);
+            NuevoDocente = docente;
+
+            Clave NuevaClave = LeerClaves().Where(x => x.Id == id).FirstOrDefault();
+            NuevaClave.Email = docente.Email;
+
             Usuario nuevoUsuario = new Usuario()
             {
                 Id = id,
@@ -366,10 +401,12 @@ namespace Logica
             // Busca el docente y lo borra de los archivos
             LeerDocentes().RemoveAll(x => x.Id == docente.Id);
             LeerUsuarios().RemoveAll(x => x.Id == docente.Id);
+            LeerClaves().RemoveAll(x => x.Id == docente.Id);
 
             // Busca el docente y lo guarda en los archivos
-            LeerDocentes().Add(docente);
-            LeerUsuarios().Add(nuevoUsuario);
+            CargarDocentes(NuevoDocente);
+            CargarUsuarios(nuevoUsuario);
+            CargarClave(NuevaClave);
 
             return new Resultado();
         }
@@ -390,28 +427,50 @@ namespace Logica
 
         public Resultado AltaPadreMadre(Padre padre, UsuarioLogueado usuarioLogueado)
         {
+            Resultado NuevoResultado = new Resultado();
             Usuario nuevousuario = null;
             padre.Id = LeerUsuarios().Count + 1;
 
-            //Pregunto si tiene el Roll de Padre
-            if (usuarioLogueado.RolSeleccionado == Roles.Padre)
+            //Pregunto si tiene el Roll de Directora
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
             {
-                if (LeerUsuarios() != null) //Busco si existe el padre
+                if (LeerUsuarios() != null) //Busco si existe el Padre
                 {
                     nuevousuario = LeerUsuarios().Where(x => x.Email == padre.Email).FirstOrDefault();
                 }
 
-                if (nuevousuario != null)
+                if (nuevousuario == null)//No existe, cargo uno nuevo
                 {
+                    Clave NuevaClave = new Clave();
+                    NuevaClave.Id = padre.Id;
+                    NuevaClave.Email = padre.Email;
+                    NuevaClave.Roles = new Roles2[] { Roles2.Padre };
 
+                    CargarClave(NuevaClave); //Cargo la nueva clave generada
+                    CargarUsuarios(padre); //Cargo un nuevo usuario
+                    CargarPadres(padre); //Cargo un nuevo padre     
+                }
+                else
+                {
+                    NuevoResultado.Errores.Add("El usuario ya existe");
                 }
             }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso");
+            }
 
-            return new Resultado();
+            return NuevoResultado;
         }
 
         public Resultado EditarPadreMadre(int id, Padre padre, UsuarioLogueado usuarioLogueado)
         {
+            Padre NuevoPadre = ObtenerPadrePorId(usuarioLogueado, id);
+            NuevoPadre = padre;
+
+            Clave NuevaClave = LeerClaves().Where(x => x.Id == id).FirstOrDefault();
+            NuevaClave.Email = padre.Email;
+
             Usuario nuevoUsuario = new Usuario()
             {
                 Id = id,
@@ -423,10 +482,12 @@ namespace Logica
             // Busca el padre y lo borra de los archivos
             LeerPadres().RemoveAll(x => x.Id == padre.Id);
             LeerUsuarios().RemoveAll(x => x.Id == padre.Id);
+            LeerClaves().RemoveAll(x => x.Id == padre.Id);
 
             // Busca el padre y lo guarda en los archivos
-            LeerPadres().Add(padre);
-            LeerUsuarios().Add(nuevoUsuario);
+            CargarPadres(NuevoPadre);
+            CargarUsuarios(nuevoUsuario);
+            CargarClave(NuevaClave);
 
             return new Resultado();
         }
@@ -447,11 +508,40 @@ namespace Logica
 
         public Resultado AltaAlumno(Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado NuevoResultado = new Resultado();
+            Usuario nuevousuario = null;
+            hijo.Id = LeerUsuarios().Count + 1;
+
+            //Pregunto si tiene el Roll de Directora
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+            {
+                if (LeerUsuarios() != null) //Busco si existe el Hijo
+                {
+                    nuevousuario = LeerUsuarios().Where(x => x.Email == hijo.Email).FirstOrDefault();
+                }
+
+                if (nuevousuario == null)//No existe, cargo uno nuevo
+                {                    
+                    CargarUsuarios(hijo); //Cargo un nuevo usuario
+                    CargarHijos(hijo); //Cargo un nuevo hijo 
+                }
+                else
+                {
+                    NuevoResultado.Errores.Add("El usuario ya existe");
+                }
+            }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso");
+            }
+            return NuevoResultado;
         }
 
         public Resultado EditarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
+            Hijo NuevoHijo = ObtenerAlumnoPorId(usuarioLogueado, id);
+            NuevoHijo = hijo;
+
             Usuario nuevoUsuario = new Usuario()
             {
                 Id = id,
@@ -465,8 +555,8 @@ namespace Logica
             LeerUsuarios().RemoveAll(x => x.Id == hijo.Id);
 
             // Busca el hijo y lo guarda en los archivos
-            LeerHijos().Add(hijo);
-            LeerUsuarios().Add(nuevoUsuario);
+            CargarHijos(NuevoHijo);
+            CargarUsuarios(nuevoUsuario);
 
             return new Resultado();
         }
