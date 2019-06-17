@@ -18,6 +18,7 @@ namespace Logica
         List<Hijo> ListaHijos = new List<Hijo>();
         List<Nota> ListaNotas = new List<Nota>();
         List<Clave> ListaClaves = new List<Clave>();
+        List<Sala> ListaSalas = new List<Sala>();
 
         /*
         public Respuesta CrearArchivos()
@@ -52,12 +53,17 @@ namespace Logica
             {
                 File.Create(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Claves.txt").Close();
             }
+            if (File.Exists(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Salas.txt"))
+            {
+                File.Create(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Salas.txt").Close();
+            }
             return NuevaRespuesta;
         }
         */
-        
+
 
         //----------------------------------USUARIOS-----------------------------------------------------------------
+
         public void CargarUsuarios(Usuario NuevoUsuario)
         {
             Usuario usuario = new Usuario();
@@ -86,9 +92,10 @@ namespace Logica
                 }
             }
             return ListaUsuarios;
-        } 
+        }
 
         //----------------------------------DOCENTES------------------------------------------------------------------
+
         public void CargarDocentes(Docente NuevoDocente)  
         {
             ListaDocentes.Add(NuevoDocente);
@@ -118,6 +125,7 @@ namespace Logica
         }
 
         //----------------------------------PADRES----------------------------------------------------------------------
+
         public void CargarPadres(Padre NuevoPadre)
         {
             ListaPadres.Add(NuevoPadre);
@@ -147,6 +155,7 @@ namespace Logica
         }
 
         //----------------------------------HIJOS-----------------------------------------------------------------------
+
         public void CargarHijos(Hijo NuevoHijo)
         {
             ListaHijos.Add(NuevoHijo);
@@ -176,6 +185,7 @@ namespace Logica
         }
 
         //----------------------------------DIRECTORES------------------------------------------------------------------
+
         public void CargarDirectores(Directora NuevoDirector)
         {
             ListaDirectores.Add(NuevoDirector);
@@ -205,6 +215,7 @@ namespace Logica
         }
 
         //----------------------------------NOTAS-----------------------------------------------------------------------
+
         public void CargarNotas(Nota NuevaNota)
         {
             ListaNotas.Add(NuevaNota);
@@ -234,6 +245,7 @@ namespace Logica
         }
 
         //----------------------------------CLAVES-----------------------------------------------------------------------
+
         public void CargarClave(Clave NuevaClave)
         {
             ListaClaves.Add(NuevaClave);
@@ -261,8 +273,39 @@ namespace Logica
             }
             return ListaClaves;
         }
+       
+        //---------------------------SALAS------------------------------------------------------
+
+        public void CargarSala(Sala NuevaSala)
+        {
+            ListaSalas.Add(NuevaSala);
+            GuardarSalas();
+        }
+
+        public void GuardarSalas()
+        {
+            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Salas.txt", false))
+            {
+                escritura.Write(JsonConvert.SerializeObject(ListaSalas));
+            }
+        }
+
+        public List<Sala> LeerSalas()
+        {
+            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Salas.txt"))
+            {
+                string contenido = lectura.ReadToEnd();
+                ListaSalas = JsonConvert.DeserializeObject<List<Sala>>(contenido);
+                if (ListaSalas == null)
+                {
+                    ListaSalas = new List<Sala>();
+                }
+            }
+            return ListaSalas;
+        }
 
         //---------------------------ABM Directores---------------------------------------------
+
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
             Resultado NuevoResultado = new Resultado();
@@ -577,29 +620,142 @@ namespace Logica
 
         public Resultado AsignarDocenteSala(Docente docente, Sala sala, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado NuevoResultado = new Resultado();
+
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+            {
+                var salasDocente = docente.Salas != null ? docente.Salas.ToList() : new List<Sala>();
+
+                if (salasDocente.Any(x => x.Id == sala.Id) == false)
+                {
+                    salasDocente.Add(sala);
+                    //agrega una sala al archivo de sala, si es que no existe dicha sala
+                    var Listasalaencontrada = LeerSalas();
+                    if (Listasalaencontrada == null)
+                    {
+                        CargarSala(sala);
+                    }
+                    else
+                    {
+                        var salaencontrada = Listasalaencontrada.Where(x => x.Id == sala.Id).FirstOrDefault();
+                        if (salaencontrada == null)
+                        {
+                            CargarSala(sala);
+                        }
+                    }
+                }
+                else
+                {
+                    NuevoResultado.Errores.Add("No se encontro la sala");
+                }
+                docente.Salas = salasDocente.ToArray();
+
+                var docenteencontrado = ObtenerDocentePorId(usuarioLogueado, docente.Id);//obtiene el docente a asignar
+                docenteencontrado.Salas = docente.Salas;//le asigna las salas
+                GuardarDocentes();//guarda los cambios
+            }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso para asignar");
+            }
+            return NuevoResultado;
         }
 
         public Resultado DesasignarDocenteSala(Docente docente, Sala sala, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado NuevoResultado = new Resultado();
+
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+            {
+                var salasDocente = docente.Salas != null ? docente.Salas.ToList() : new List<Sala>();
+
+                if (salasDocente.Any(x => x.Id == sala.Id) == true)
+                {
+                    salasDocente.Remove(sala);
+                }
+                else
+                {
+                    NuevoResultado.Errores.Add("No se encontro la sala");
+                }   
+
+                docente.Salas = salasDocente.ToArray();
+
+                var docenteencontrado = ObtenerDocentePorId(usuarioLogueado, docente.Id);
+                docenteencontrado.Salas = docente.Salas;
+                GuardarDocentes();
+            }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso para desasignar");
+            }
+            return NuevoResultado;
         }
 
         public Resultado AsignarHijoPadre(Hijo hijo, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado NuevoResultado = new Resultado();
+
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+            {
+                var hijosPadre = padre.Hijos != null ? padre.Hijos.ToList() : new List<Hijo>();
+
+                if (hijosPadre.Any(x => x.Id == hijo.Id) == false)
+                {
+                    hijosPadre.Add(hijo);
+                }
+                else
+                {
+                    NuevoResultado.Errores.Add("No se encontro el hijo");
+                }   
+
+                padre.Hijos = hijosPadre.ToArray();
+
+                var padreencontrado = ObtenerPadrePorId(usuarioLogueado, padre.Id);
+                padreencontrado.Hijos = padre.Hijos;
+                GuardarPadres();
+            }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso para asignar");
+            }
+            return NuevoResultado;
         }
 
         public Resultado DesasignarHijoPadre(Hijo hijo, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado NuevoResultado = new Resultado();
+
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+            {
+                var hijosPadre = padre.Hijos != null ? padre.Hijos.ToList() : new List<Hijo>();
+
+                if (hijosPadre.Any(x => x.Id == hijo.Id) == true)
+                {
+                    hijosPadre.Remove(hijo);
+                }
+                else
+                {
+                    NuevoResultado.Errores.Add("No se encontro el hijo");
+                }    
+
+                padre.Hijos = hijosPadre.ToArray();
+
+                var padreencontrado = ObtenerPadrePorId(usuarioLogueado, padre.Id);
+                padreencontrado.Hijos = padre.Hijos;
+                GuardarPadres();
+            }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso para desasignar");
+            }
+            return NuevoResultado;
         }
 
         //---------------------------Obtener---------------------------------------------
         
         public string ObtenerNombreGrupo()
         {
-            throw new NotImplementedException();
+            return "Giovannini-Bressan";
         }
 
         public UsuarioLogueado ObtenerUsuario(string email, string clave)
@@ -646,6 +802,8 @@ namespace Logica
         {
             throw new NotImplementedException();
         }
+
+        //--------------------------ObtenerPorID---------------------------------------
 
         public Directora ObtenerDirectoraPorId(UsuarioLogueado usuarioLogueado, int id)
         {
