@@ -64,15 +64,7 @@ namespace Logica
 
         //----------------------------------USUARIOS-----------------------------------------------------------------
 
-        public void CargarUsuarios(Usuario NuevoUsuario)
-        {
-            Usuario usuario = new Usuario();
-            usuario = NuevoUsuario;
-            ListaUsuarios.Add(usuario);
-            GuardarUsuarios();
-        }
-
-        public void GuardarUsuarios()
+        public void GuardarUsuarios(List<Usuario> ListaUsuarios)
         {
             using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Usuarios.txt", false))
             {
@@ -96,13 +88,7 @@ namespace Logica
 
         //----------------------------------DOCENTES------------------------------------------------------------------
 
-        public void CargarDocentes(Docente NuevoDocente)  
-        {
-            ListaDocentes.Add(NuevoDocente);
-            GuardarDocentes();
-        } 
-
-        public void GuardarDocentes()
+        public void GuardarDocentes(List<Docente> ListaDocentes)
         {
             using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Docentes.txt", false))
             {
@@ -126,13 +112,7 @@ namespace Logica
 
         //----------------------------------PADRES----------------------------------------------------------------------
 
-        public void CargarPadres(Padre NuevoPadre)
-        {
-            ListaPadres.Add(NuevoPadre);
-            GuardarPadres();
-        }
-
-        public void GuardarPadres()
+        public void GuardarPadres(List<Padre> ListaPadres)
         {
             using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Padres.txt", false))
             {
@@ -156,13 +136,7 @@ namespace Logica
 
         //----------------------------------HIJOS-----------------------------------------------------------------------
 
-        public void CargarHijos(Hijo NuevoHijo)
-        {
-            ListaHijos.Add(NuevoHijo);
-            GuardarHijos();
-        }
-
-        public void GuardarHijos()
+        public void GuardarHijos(List<Hijo> ListaHijos)
         {
             using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Hijos.txt", false))
             {
@@ -186,13 +160,7 @@ namespace Logica
 
         //----------------------------------DIRECTORES------------------------------------------------------------------
 
-        public void CargarDirectores(Directora NuevoDirector)
-        {
-            ListaDirectores.Add(NuevoDirector);
-            GuardarDirectores();
-        }
-
-        public void GuardarDirectores()
+        public void GuardarDirectores(List<Directora> ListaDirectores)
         {
             using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Directores.txt", false))
             {
@@ -216,13 +184,7 @@ namespace Logica
 
         //----------------------------------NOTAS-----------------------------------------------------------------------
 
-        public void CargarNotas(Nota NuevaNota)
-        {
-            ListaNotas.Add(NuevaNota);
-            GuardarNotas();
-        }
-
-        public void GuardarNotas()
+        public void GuardarNotas(List<Nota> ListaNotas)
         {
             using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Notas.txt", false))
             {
@@ -246,13 +208,7 @@ namespace Logica
 
         //----------------------------------CLAVES-----------------------------------------------------------------------
 
-        public void CargarClave(Clave NuevaClave)
-        {
-            ListaClaves.Add(NuevaClave);
-            GuardarClaves();
-        }
-
-        public void GuardarClaves()
+        public void GuardarClaves(List<Clave> ListaClaves)
         {
             using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Claves.txt", false))
             {
@@ -276,13 +232,7 @@ namespace Logica
        
         //---------------------------SALAS------------------------------------------------------
 
-        public void CargarSala(Sala NuevaSala)
-        {
-            ListaSalas.Add(NuevaSala);
-            GuardarSalas();
-        }
-
-        public void GuardarSalas()
+        public void GuardarSalas(List<Sala> ListaSalas)
         {
             using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Salas.txt", false))
             {
@@ -327,9 +277,17 @@ namespace Logica
                     NuevaClave.Email = directora.Email;
                     NuevaClave.Roles = new Roles2[] { Roles2.Directora };
 
-                    CargarClave(NuevaClave); //Cargo la nueva clave generada
-                    CargarUsuarios(directora); //Cargo un nuevo usuario
-                    CargarDirectores(directora); //Cargo un nuevo director                    
+                    LeerClaves();
+                    ListaClaves.Add(NuevaClave); //Cargo la nueva clave generada
+                    GuardarClaves(ListaClaves);
+
+                    LeerUsuarios();
+                    ListaUsuarios.Add(directora); //Cargo un nuevo usuario
+                    GuardarUsuarios(ListaUsuarios);
+
+                    LeerDirectores();
+                    ListaDirectores.Add(directora); //Cargo un nuevo director 
+                    GuardarDirectores(ListaDirectores);                  
                 }
                 else
                 {
@@ -346,43 +304,68 @@ namespace Logica
 
         public Resultado EditarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            Directora NuevaDirectora = ObtenerDirectoraPorId(usuarioLogueado, id);
-            NuevaDirectora = directora;
+            Resultado NuevoResultado = new Resultado();
 
-            Clave NuevaClave = LeerClaves().Where(x => x.Id == id).FirstOrDefault();
-            NuevaClave.Email = directora.Email;
-           
-            Usuario nuevoUsuario = new Usuario()
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
             {
-                Id = id,
-                Nombre = directora.Nombre,
-                Apellido = directora.Apellido,
-                Email= directora.Email
-            };
-            
-            // Busca el director y lo borra de los archivos
-            LeerDirectores().RemoveAll(x => x.Id == directora.Id);
-            LeerUsuarios().RemoveAll(x => x.Id == directora.Id);
-            LeerClaves().RemoveAll(x => x.Id == directora.Id);
+                Directora NuevaDirectora = ObtenerDirectoraPorId(usuarioLogueado, id);
+                NuevaDirectora = directora;
 
-            // Busca el director y lo guarda en los archivos
-            CargarDirectores(NuevaDirectora);
-            CargarUsuarios(nuevoUsuario);
-            CargarClave(NuevaClave);
+                Clave NuevaClave = LeerClaves().Where(x => x.Id == id).FirstOrDefault();
+                NuevaClave.Email = directora.Email;
 
-            return new Resultado();
+                Usuario nuevoUsuario = new Usuario()
+                {
+                    Id = id,
+                    Nombre = directora.Nombre,
+                    Apellido = directora.Apellido,
+                    Email = directora.Email
+                };
+
+                // Busca el director y lo borra de los archivos
+                LeerDirectores().RemoveAll(x => x.Id == directora.Id);
+                LeerUsuarios().RemoveAll(x => x.Id == directora.Id);
+                LeerClaves().RemoveAll(x => x.Id == directora.Id);
+
+                // Busca el director y lo guarda en los archivos
+                LeerDirectores();
+                LeerUsuarios();
+                LeerClaves();
+
+                ListaDirectores.Add(NuevaDirectora);
+                ListaUsuarios.Add(nuevoUsuario);
+                ListaClaves.Add(NuevaClave);
+
+                GuardarDirectores(ListaDirectores);
+                GuardarUsuarios(ListaUsuarios);
+                GuardarClaves(ListaClaves);
+            }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso para editar");
+            }
+            return NuevoResultado;
         }
 
         public Resultado EliminarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            // Busca el director y lo borra de los archivos
-            LeerDirectores().RemoveAll(x => x.Id == directora.Id);
-            LeerUsuarios().RemoveAll(x => x.Id == directora.Id);
+            Resultado NuevoResultado = new Resultado();
 
-            GuardarUsuarios();
-            GuardarDirectores();
-            
-            return new Resultado();
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+            {
+                // Busca el director y lo borra de los archivos
+                LeerDirectores().RemoveAll(x => x.Id == directora.Id);
+                LeerUsuarios().RemoveAll(x => x.Id == directora.Id);
+
+                GuardarUsuarios(ListaUsuarios);
+                GuardarDirectores(ListaDirectores);
+            }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso para eliminar");
+            }
+
+            return NuevoResultado;
         }
 
         //---------------------------ABM Docentes---------------------------------------------
@@ -408,9 +391,17 @@ namespace Logica
                     NuevaClave.Email = docente.Email;
                     NuevaClave.Roles = new Roles2[] { Roles2.Docente };
 
-                    CargarClave(NuevaClave); //Cargo la nueva clave generada
-                    CargarUsuarios(docente); //Cargo un nuevo usuario
-                    CargarDocentes(docente); //Cargo un nuevo docente      
+                    LeerClaves();
+                    ListaClaves.Add(NuevaClave); //Cargo la nueva clave generada
+                    GuardarClaves(ListaClaves);
+
+                    LeerUsuarios();
+                    ListaUsuarios.Add(docente); //Cargo un nuevo usuario
+                    GuardarUsuarios(ListaUsuarios);
+
+                    LeerDocentes();
+                    ListaDocentes.Add(docente); //Cargo un nuevo docente
+                    GuardarDocentes(ListaDocentes);
                 }
                 else
                 {
@@ -427,43 +418,69 @@ namespace Logica
 
         public Resultado EditarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
         {
-            Docente NuevoDocente = ObtenerDocentePorId(usuarioLogueado, id);
-            NuevoDocente = docente;
+            Resultado NuevoResultado = new Resultado();
 
-            Clave NuevaClave = LeerClaves().Where(x => x.Id == id).FirstOrDefault();
-            NuevaClave.Email = docente.Email;
-
-            Usuario nuevoUsuario = new Usuario()
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
             {
-                Id = id,
-                Nombre = docente.Nombre,
-                Apellido = docente.Apellido,
-                Email = docente.Email
-            };
+                Docente NuevoDocente = ObtenerDocentePorId(usuarioLogueado, id);
+                NuevoDocente = docente;
 
-            // Busca el docente y lo borra de los archivos
-            LeerDocentes().RemoveAll(x => x.Id == docente.Id);
-            LeerUsuarios().RemoveAll(x => x.Id == docente.Id);
-            LeerClaves().RemoveAll(x => x.Id == docente.Id);
+                Clave NuevaClave = LeerClaves().Where(x => x.Id == id).FirstOrDefault();
+                NuevaClave.Email = docente.Email;
 
-            // Busca el docente y lo guarda en los archivos
-            CargarDocentes(NuevoDocente);
-            CargarUsuarios(nuevoUsuario);
-            CargarClave(NuevaClave);
+                Usuario nuevoUsuario = new Usuario()
+                {
+                    Id = id,
+                    Nombre = docente.Nombre,
+                    Apellido = docente.Apellido,
+                    Email = docente.Email
+                };
 
-            return new Resultado();
+                // Busca el docente y lo borra de los archivos
+                LeerDocentes().RemoveAll(x => x.Id == docente.Id);
+                LeerUsuarios().RemoveAll(x => x.Id == docente.Id);
+                LeerClaves().RemoveAll(x => x.Id == docente.Id);
+
+                // Busca el docente y lo guarda en los archivos
+                LeerDocentes();
+                LeerUsuarios();
+                LeerClaves();
+
+                ListaDocentes.Add(NuevoDocente);
+                ListaUsuarios.Add(nuevoUsuario);
+                ListaClaves.Add(NuevaClave);
+
+                GuardarDocentes(ListaDocentes);
+                GuardarUsuarios(ListaUsuarios);
+                GuardarClaves(ListaClaves);
+            }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso para editar");
+            }
+
+            return NuevoResultado;
         }
 
         public Resultado EliminarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
         {
-            // Busca al docente y lo borra de los archivos
-            LeerDocentes().RemoveAll(x => x.Id == docente.Id);
-            LeerUsuarios().RemoveAll(x => x.Id == docente.Id);
+            Resultado NuevoResultado = new Resultado();
 
-            GuardarDocentes();
-            GuardarUsuarios();
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+            {
+                // Busca al docente y lo borra de los archivos
+                LeerDocentes().RemoveAll(x => x.Id == docente.Id);
+                LeerUsuarios().RemoveAll(x => x.Id == docente.Id);
 
-            return new Resultado();
+                GuardarDocentes(ListaDocentes);
+                GuardarUsuarios(ListaUsuarios);
+            }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso para eliminar");
+            }
+
+            return NuevoResultado;
         }
 
         //---------------------------ABM Padres---------------------------------------------
@@ -489,9 +506,17 @@ namespace Logica
                     NuevaClave.Email = padre.Email;
                     NuevaClave.Roles = new Roles2[] { Roles2.Padre };
 
-                    CargarClave(NuevaClave); //Cargo la nueva clave generada
-                    CargarUsuarios(padre); //Cargo un nuevo usuario
-                    CargarPadres(padre); //Cargo un nuevo padre     
+                    LeerClaves();
+                    ListaClaves.Add(NuevaClave); //Cargo la nueva clave generada
+                    GuardarClaves(ListaClaves);
+
+                    LeerUsuarios();
+                    ListaUsuarios.Add(padre); //Cargo un nuevo usuario
+                    GuardarUsuarios(ListaUsuarios);
+
+                    LeerPadres();
+                    ListaPadres.Add(padre); //Cargo un nuevo padre
+                    GuardarPadres(ListaPadres);
                 }
                 else
                 {
@@ -508,43 +533,69 @@ namespace Logica
 
         public Resultado EditarPadreMadre(int id, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            Padre NuevoPadre = ObtenerPadrePorId(usuarioLogueado, id);
-            NuevoPadre = padre;
+            Resultado NuevoResultado = new Resultado();
 
-            Clave NuevaClave = LeerClaves().Where(x => x.Id == id).FirstOrDefault();
-            NuevaClave.Email = padre.Email;
-
-            Usuario nuevoUsuario = new Usuario()
+            if (usuarioLogueado.RolSeleccionado == Roles.Docente) 
             {
-                Id = id,
-                Nombre = padre.Nombre,
-                Apellido = padre.Apellido,
-                Email = padre.Email
-            };
+                Padre NuevoPadre = ObtenerPadrePorId(usuarioLogueado, id);
+                NuevoPadre = padre;
 
-            // Busca el padre y lo borra de los archivos
-            LeerPadres().RemoveAll(x => x.Id == padre.Id);
-            LeerUsuarios().RemoveAll(x => x.Id == padre.Id);
-            LeerClaves().RemoveAll(x => x.Id == padre.Id);
+                Clave NuevaClave = LeerClaves().Where(x => x.Id == id).FirstOrDefault();
+                NuevaClave.Email = padre.Email;
 
-            // Busca el padre y lo guarda en los archivos
-            CargarPadres(NuevoPadre);
-            CargarUsuarios(nuevoUsuario);
-            CargarClave(NuevaClave);
+                Usuario nuevoUsuario = new Usuario()
+                {
+                    Id = id,
+                    Nombre = padre.Nombre,
+                    Apellido = padre.Apellido,
+                    Email = padre.Email
+                };
 
-            return new Resultado();
+                // Busca el padre y lo borra de los archivos
+                LeerPadres().RemoveAll(x => x.Id == padre.Id);
+                LeerUsuarios().RemoveAll(x => x.Id == padre.Id);
+                LeerClaves().RemoveAll(x => x.Id == padre.Id);
+
+                // Busca el padre y lo guarda en los archivos
+                LeerPadres();
+                LeerUsuarios();
+                LeerClaves();
+
+                ListaPadres.Add(NuevoPadre);
+                ListaUsuarios.Add(nuevoUsuario);
+                ListaClaves.Add(NuevaClave);
+
+                GuardarPadres(ListaPadres);
+                GuardarUsuarios(ListaUsuarios);
+                GuardarClaves(ListaClaves);
+            }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permisos para editar");
+            }
+
+            return NuevoResultado;
         }
 
         public Resultado EliminarPadreMadre(int id, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            // Busca el padre y lo borra de los archivos
-            LeerPadres().RemoveAll(x => x.Id == padre.Id);
-            LeerUsuarios().RemoveAll(x => x.Id == padre.Id);
+            Resultado NuevoResultado = new Resultado();
 
-            GuardarUsuarios();
-            GuardarPadres();
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+            {
+                // Busca el padre y lo borra de los archivos
+                LeerPadres().RemoveAll(x => x.Id == padre.Id);
+                LeerUsuarios().RemoveAll(x => x.Id == padre.Id);
 
-            return new Resultado();
+                GuardarUsuarios(ListaUsuarios);
+                GuardarPadres(ListaPadres);
+            }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso para eliminar");
+            }
+
+            return NuevoResultado;
         }
 
         //---------------------------ABM Hijos---------------------------------------------
@@ -564,9 +615,14 @@ namespace Logica
                 }
 
                 if (nuevousuario == null)//No existe, cargo uno nuevo
-                {                    
-                    CargarUsuarios(hijo); //Cargo un nuevo usuario
-                    CargarHijos(hijo); //Cargo un nuevo hijo 
+                {
+                    LeerUsuarios();
+                    ListaUsuarios.Add(hijo); //Cargo un nuevo usuario
+                    GuardarUsuarios(ListaUsuarios);
+
+                    LeerHijos();
+                    ListaHijos.Add(hijo); //Cargo un nuevo Hijo
+                    GuardarHijos(ListaHijos);
                 }
                 else
                 {
@@ -582,38 +638,63 @@ namespace Logica
 
         public Resultado EditarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            Hijo NuevoHijo = ObtenerAlumnoPorId(usuarioLogueado, id);
-            NuevoHijo = hijo;
+            Resultado NuevoResultado = new Resultado();
 
-            Usuario nuevoUsuario = new Usuario()
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
             {
-                Id = id,
-                Nombre = hijo.Nombre,
-                Apellido = hijo.Apellido,
-                Email = hijo.Email
-            };
+                Hijo NuevoHijo = ObtenerAlumnoPorId(usuarioLogueado, id);
+                NuevoHijo = hijo;
 
-            // Busca el hijo y lo borra de los archivos
-            LeerHijos().RemoveAll(x => x.Id == hijo.Id);
-            LeerUsuarios().RemoveAll(x => x.Id == hijo.Id);
+                Usuario nuevoUsuario = new Usuario()
+                {
+                    Id = id,
+                    Nombre = hijo.Nombre,
+                    Apellido = hijo.Apellido,
+                    Email = hijo.Email
+                };
 
-            // Busca el hijo y lo guarda en los archivos
-            CargarHijos(NuevoHijo);
-            CargarUsuarios(nuevoUsuario);
+                // Busca el hijo y lo borra de los archivos
+                LeerHijos().RemoveAll(x => x.Id == hijo.Id);
+                LeerUsuarios().RemoveAll(x => x.Id == hijo.Id);
+
+                // Busca el hijo y lo guarda en los archivos
+                LeerHijos();
+                LeerUsuarios();
+
+                ListaHijos.Add(NuevoHijo);
+                ListaUsuarios.Add(nuevoUsuario);
+
+                GuardarHijos(ListaHijos);
+                GuardarUsuarios(ListaUsuarios);
+            }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso para editar");
+            }
+            
 
             return new Resultado();
         }
 
         public Resultado EliminarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
-        { 
-            // Busca el alumno y lo borra de los archivos
-            LeerHijos().RemoveAll(x => x.Id == hijo.Id);
-            LeerUsuarios().RemoveAll(x => x.Id == hijo.Id);
+        {
+            Resultado NuevoResultado = new Resultado();
 
-            GuardarHijos();
-            GuardarUsuarios();
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+            {
+                // Busca el alumno y lo borra de los archivos
+                LeerHijos().RemoveAll(x => x.Id == hijo.Id);
+                LeerUsuarios().RemoveAll(x => x.Id == hijo.Id);
 
-            return new Resultado();
+                GuardarHijos(ListaHijos);
+                GuardarUsuarios(ListaUsuarios);
+            }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene permiso para eliminar");
+            }
+
+            return NuevoResultado;
         }
 
         //---------------------------Asignar/Desasignar---------------------------------------------
@@ -633,14 +714,19 @@ namespace Logica
                     var Listasalaencontrada = LeerSalas();
                     if (Listasalaencontrada == null)
                     {
-                        CargarSala(sala);
+                        LeerSalas();
+                        ListaSalas.Add(sala);
+                        GuardarSalas(ListaSalas);
+                        
                     }
                     else
                     {
                         var salaencontrada = Listasalaencontrada.Where(x => x.Id == sala.Id).FirstOrDefault();
                         if (salaencontrada == null)
                         {
-                            CargarSala(sala);
+                            LeerSalas();
+                            ListaSalas.Add(sala);
+                            GuardarSalas(ListaSalas);
                         }
                     }
                 }
@@ -650,9 +736,9 @@ namespace Logica
                 }
                 docente.Salas = salasDocente.ToArray();
 
-                var docenteencontrado = ObtenerDocentePorId(usuarioLogueado, docente.Id);//obtiene el docente a asignar
-                docenteencontrado.Salas = docente.Salas;//le asigna las salas
-                GuardarDocentes();//guarda los cambios
+                LeerDocentes();
+                ListaDocentes.Find(x => x.Id == docente.Id).Salas = docente.Salas; //obtiene el docente a asignar y le asigna las salas
+                GuardarDocentes(ListaDocentes); //guarda los cambios
             }
             else
             {
@@ -680,9 +766,9 @@ namespace Logica
 
                 docente.Salas = salasDocente.ToArray();
 
-                var docenteencontrado = ObtenerDocentePorId(usuarioLogueado, docente.Id);
-                docenteencontrado.Salas = docente.Salas;
-                GuardarDocentes();
+                LeerDocentes();
+                ListaDocentes.Find(x => x.Id == docente.Id).Salas = docente.Salas; //obtiene el docente a desasignar y le asigna las salas que tenga
+                GuardarDocentes(ListaDocentes); //guarda los cambios
             }
             else
             {
@@ -710,9 +796,9 @@ namespace Logica
 
                 padre.Hijos = hijosPadre.ToArray();
 
-                var padreencontrado = ObtenerPadrePorId(usuarioLogueado, padre.Id);
-                padreencontrado.Hijos = padre.Hijos;
-                GuardarPadres();
+                LeerPadres();
+                ListaPadres.Find(x => x.Id == padre.Id).Hijos = padre.Hijos; //obtiene el padre y le asigna los hijos
+                GuardarPadres(ListaPadres);
             }
             else
             {
@@ -740,9 +826,9 @@ namespace Logica
 
                 padre.Hijos = hijosPadre.ToArray();
 
-                var padreencontrado = ObtenerPadrePorId(usuarioLogueado, padre.Id);
-                padreencontrado.Hijos = padre.Hijos;
-                GuardarPadres();
+                LeerPadres();
+                ListaPadres.Find(x => x.Id == padre.Id).Hijos = padre.Hijos; //obtiene el padre y le asigna los hijos que tenga
+                GuardarPadres(ListaPadres);
             }
             else
             {
@@ -785,22 +871,46 @@ namespace Logica
 
         public Grilla<Directora> ObtenerDirectoras(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            return new Grilla<Directora>()
+            {
+                Lista = _directoras
+                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                CantidadRegistros = _directoras.Count
+            };
         }
 
         public Grilla<Docente> ObtenerDocentes(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            return new Grilla<Docente>()
+            {
+                Lista = _docentes
+                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                CantidadRegistros = _docentes.Count
+            };
         }
 
         public Grilla<Padre> ObtenerPadres(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            return new Grilla<Padre>()
+            {
+                Lista = _padres
+                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                CantidadRegistros = _padres.Count
+            };
         }
 
         public Grilla<Hijo> ObtenerAlumnos(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            return new Grilla<Hijo>()
+            {
+                Lista = _alumnos
+                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
+                CantidadRegistros = _alumnos.Count
+            };
         }
 
         //--------------------------ObtenerPorID---------------------------------------
@@ -839,7 +949,19 @@ namespace Logica
 
         public Resultado MarcarNotaComoLeida(Nota nota, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado NuevoResultado = new Resultado();
+
+            if (usuarioLogueado.RolSeleccionado == Roles.Padre) //Solo si tiene rol padre puede responder una nota
+            {
+                LeerNotas();
+                ListaNotas.Find(x => x.Id == nota.Id).Leida = true; //encuentra la nota y la marca como leida
+                GuardarNotas(ListaNotas);
+            }
+            else
+            {
+                NuevoResultado.Errores.Add("No tiene los permisos necesarios");
+            }
+            return NuevoResultado;
         }
         
     }
