@@ -979,46 +979,46 @@ namespace Logica
 
         public Grilla<Directora> ObtenerDirectoras(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            return new Grilla<Directora>()
-            {
-                Lista = _directoras
-                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
-                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                CantidadRegistros = _directoras.Count
-            };
+            Grilla<Directora> NuevaGrilla = new Grilla<Directora>();
+            NuevaGrilla.Lista = LeerDirectores()
+            .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+            .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray();
+            NuevaGrilla.CantidadRegistros = LeerDirectores().Count;
+
+            return NuevaGrilla;
         }
 
         public Grilla<Docente> ObtenerDocentes(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            return new Grilla<Docente>()
-            {
-                Lista = _docentes
-                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
-                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                CantidadRegistros = _docentes.Count
-            };
+            Grilla<Docente> NuevaGrilla = new Grilla<Docente>();
+            NuevaGrilla.Lista = LeerDocentes()
+            .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+            .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray();
+            NuevaGrilla.CantidadRegistros = LeerDocentes().Count;
+
+            return NuevaGrilla;
         }
 
         public Grilla<Padre> ObtenerPadres(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            return new Grilla<Padre>()
-            {
-                Lista = _padres
-                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
-                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                CantidadRegistros = _padres.Count
-            };
+            Grilla<Padre> NuevaGrilla = new Grilla<Padre>();
+            NuevaGrilla.Lista = LeerPadres()
+            .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+            .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray();
+            NuevaGrilla.CantidadRegistros = LeerPadres().Count;
+
+            return NuevaGrilla;
         }
 
         public Grilla<Hijo> ObtenerAlumnos(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            return new Grilla<Hijo>()
-            {
-                Lista = _alumnos
-                .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
-                .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray(),
-                CantidadRegistros = _alumnos.Count
-            };
+            Grilla<Hijo> NuevaGrilla = new Grilla<Hijo>();
+            NuevaGrilla.Lista = LeerHijos()
+            .Where(x => string.IsNullOrEmpty(busquedaGlobal) || x.Nombre.Contains(busquedaGlobal) || x.Apellido.Contains(busquedaGlobal))
+            .Skip(paginaActual * totalPorPagina).Take(totalPorPagina).ToArray();
+            NuevaGrilla.CantidadRegistros = LeerHijos().Count;
+
+            return NuevaGrilla;
         }
 
         //--------------------------ObtenerPorID---------------------------------------
@@ -1052,7 +1052,80 @@ namespace Logica
 
         public Resultado ResponderNota(Nota nota, Comentario nuevoComentario, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            Resultado NuevoResultado = new Resultado();
+
+            //Se guarda en el archivo de notas
+            LeerNotas();
+            var n = ListaNotas.Single(x => x.Id == nota.Id);
+            var comentarios = n.Comentarios == null ? new List<Comentario>() : n.Comentarios.ToList();
+            comentarios.Add(nuevoComentario);
+            n.Comentarios = comentarios.ToArray();
+            GuardarNotas(ListaNotas);
+
+            LeerHijos();
+            if (usuarioLogueado.RolSeleccionado == Roles.Padre)
+            {
+                var padreencontrado = LeerPadres().Single(x => x.Email == usuarioLogueado.Email);
+                foreach (var item in ListaHijos)
+                {
+                    foreach (var item2 in padreencontrado.Hijos)
+                    {
+                        if (item2.Id == item.Id) //pregunto si el hijo que se encuentra en el padre es el mismo que esta en el archivo general de hijos
+                        {
+                            foreach (var item3 in item.Notas)
+                            {
+                                if (item3.Id == nota.Id)
+                                {
+                                    item3.Comentarios = n.Comentarios;
+                                    GuardarHijos(ListaHijos);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (usuarioLogueado.RolSeleccionado == Roles.Docente)
+                {
+                    var docenteencontrado = LeerDocentes().Single(x => x.Email == usuarioLogueado.Email);
+                    foreach (var item in ListaHijos)
+                    {
+                        foreach (var item2 in docenteencontrado.Salas)
+                        {
+                            if (item2.Id == item.Sala.Id) //pregunto si la sala que se encuentra en eldocente es el mismo que esta en el archivo general de hijos
+                            {
+                                foreach (var item3 in item.Notas)
+                                {
+                                    if (item3.Id == nota.Id)
+                                    {
+                                        item3.Comentarios = n.Comentarios;
+                                        GuardarHijos(ListaHijos);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (usuarioLogueado.RolSeleccionado == Roles.Directora)
+                    {
+                        foreach (var item in ListaHijos)
+                        {
+                            foreach (var item2 in item.Notas)
+                            {
+                                if (item2.Id == nota.Id)
+                                {
+                                    item2.Comentarios = n.Comentarios;
+                                    GuardarHijos(ListaHijos);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return NuevoResultado;
         }
 
         public Resultado MarcarNotaComoLeida(Nota nota, UsuarioLogueado usuarioLogueado)
