@@ -10,12 +10,13 @@ using WebApp.Controllers;
 using Contratos;
 using Mocks;
 using WebApp.Models;
+using LogicaImplementar;
 
 namespace AnBem.WebApplication.Controllers
 {
     public class CuadernoController : BaseController
     {
-        private static IServicioWeb servicio = new MockService();
+        private static IServicioWeb servicio = new Implementacion();
 
         [HttpGet]
         public async Task<ActionResult> Index(int? classroomId = null, int? studenId = null)

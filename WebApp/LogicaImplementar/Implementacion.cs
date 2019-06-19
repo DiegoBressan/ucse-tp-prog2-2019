@@ -4,24 +4,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Logica;
 
 namespace LogicaImplementar
 {
-    public class Class1 : IServicioWeb
+    public class Implementacion : IServicioWeb
     {
+        public ClasePrincipal ClasePrincipal { get; set; }
+
+        public Implementacion()
+        {
+            ClasePrincipal = new ClasePrincipal();
+            ClasePrincipal.CrearArchivos();           
+        }
+
         public Resultado AltaAlumno(Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.AltaAlumno(hijo, usuarioLogueado);
         }
 
         public Resultado AltaDirectora(Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.AltaDirectora(directora, usuarioLogueado);
         }
 
         public Resultado AltaDocente(Docente docente, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.AltaDocente(docente, usuarioLogueado);
         }
 
         public Resultado AltaNota(Nota nota, Sala[] salas, Hijo[] hijos, UsuarioLogueado usuarioLogueado)
@@ -31,107 +40,107 @@ namespace LogicaImplementar
 
         public Resultado AltaPadreMadre(Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.AltaPadreMadre(padre, usuarioLogueado);
         }
 
         public Resultado AsignarDocenteSala(Docente docente, Sala sala, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.AsignarDocenteSala(docente, sala, usuarioLogueado);
         }
 
         public Resultado AsignarHijoPadre(Hijo hijo, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.AsignarHijoPadre(hijo, padre, usuarioLogueado);
         }
 
         public Resultado DesasignarDocenteSala(Docente docente, Sala sala, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return DesasignarDocenteSala(docente, sala, usuarioLogueado);
         }
 
         public Resultado DesasignarHijoPadre(Hijo hijo, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return DesasignarHijoPadre(hijo, padre, usuarioLogueado);
         }
 
         public Resultado EditarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.EditarAlumno(id, hijo, usuarioLogueado);
         }
 
         public Resultado EditarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.EditarDirectora(id, directora, usuarioLogueado);
         }
 
         public Resultado EditarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.EditarDocente(id, docente, usuarioLogueado);
         }
 
         public Resultado EditarPadreMadre(int id, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.EditarPadreMadre(id, padre, usuarioLogueado);
         }
 
         public Resultado EliminarAlumno(int id, Hijo hijo, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.EliminarAlumno(id, hijo, usuarioLogueado);
         }
 
         public Resultado EliminarDirectora(int id, Directora directora, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.EliminarDirectora(id, directora, usuarioLogueado);
         }
 
         public Resultado EliminarDocente(int id, Docente docente, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.EliminarDocente(id, docente, usuarioLogueado);
         }
 
         public Resultado EliminarPadreMadre(int id, Padre padre, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.EliminarPadreMadre(id, padre, usuarioLogueado);
         }
 
         public Resultado MarcarNotaComoLeida(Nota nota, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.MarcarNotaComoLeida(nota, usuarioLogueado);
         }
 
         public Hijo ObtenerAlumnoPorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.ObtenerAlumnoPorId(usuarioLogueado, id);
         }
 
         public Grilla<Hijo> ObtenerAlumnos(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.ObtenerAlumnos(usuarioLogueado, paginaActual, totalPorPagina, busquedaGlobal);
         }
 
         public Nota[] ObtenerCuadernoComunicaciones(int idPersona, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.ObtenerCuadernoComunicaciones(idPersona, usuarioLogueado);
         }
 
         public Directora ObtenerDirectoraPorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.ObtenerDirectoraPorId(usuarioLogueado, id);
         }
 
         public Grilla<Directora> ObtenerDirectoras(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.ObtenerDirectoras(usuarioLogueado, paginaActual, totalPorPagina, busquedaGlobal);
         }
 
         public Docente ObtenerDocentePorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.ObtenerDocentePorId(usuarioLogueado, id);
         }
 
         public Grilla<Docente> ObtenerDocentes(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.ObtenerDocentes(usuarioLogueado, paginaActual, totalPorPagina, busquedaGlobal);
         }
 
         public Institucion[] ObtenerInstituciones()
@@ -141,37 +150,37 @@ namespace LogicaImplementar
 
         public string ObtenerNombreGrupo()
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.ObtenerNombreGrupo();
         }
 
         public Padre ObtenerPadrePorId(UsuarioLogueado usuarioLogueado, int id)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.ObtenerPadrePorId(usuarioLogueado, id);
         }
 
         public Grilla<Padre> ObtenerPadres(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.ObtenerPadres(usuarioLogueado, paginaActual, totalPorPagina, busquedaGlobal);
         }
 
         public Hijo[] ObtenerPersonas(UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.ObtenerPersonas(usuarioLogueado);
         }
 
         public Sala[] ObtenerSalasPorInstitucion(UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.ObtenerSalasPorInstitucion(usuarioLogueado);
         }
 
         public UsuarioLogueado ObtenerUsuario(string email, string clave)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.ObtenerUsuario(email, clave);
         }
 
         public Resultado ResponderNota(Nota nota, Comentario nuevoComentario, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            return ClasePrincipal.ResponderNota(nota, nuevoComentario, usuarioLogueado);
         }
     }
 }

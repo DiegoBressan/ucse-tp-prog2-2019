@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using WebApp.Models;
+using LogicaImplementar;
 
 namespace WebApp.Controllers
 {

@@ -9,6 +9,7 @@ using System.Net.Mail;
 using WebApp.Controllers;
 using Contratos;
 using Mocks;
+using LogicaImplementar;
 using WebApp.Models;
 
 namespace AnBem.WebApplication.Controllers
@@ -16,7 +17,7 @@ namespace AnBem.WebApplication.Controllers
     
     public class DocentesController : BaseController
     {
-        private static IServicioWeb servicio = new MockService();
+        private static IServicioWeb servicio = new Implementacion();
         // GET: /Docentes/
         [HttpGet]
         public async Task<ActionResult> Index()

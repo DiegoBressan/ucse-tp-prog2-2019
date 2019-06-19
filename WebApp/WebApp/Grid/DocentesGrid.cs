@@ -1,4 +1,5 @@
 ﻿using Contratos;
+using LogicaImplementar;
 using Mocks;
 using MVCGrid.Models;
 using MVCGrid.Web;
@@ -54,7 +55,7 @@ namespace WebApp.Grid
                       string globalSearch = options.GetAdditionalQueryOptionString("search");
                       UsuarioLogueado usuarioLogueado = JsonConvert.DeserializeObject<UsuarioLogueado>(options.GetPageParameterString("user"));
 
-                      IServicioWeb servicio = BaseController.CreateService();
+                      IServicioWeb servicio = new Implementacion();
                       var data = servicio.ObtenerDocentes(usuarioLogueado, options.PageIndex.Value, options.ItemsPerPage.Value, globalSearch);
 
 					  return new QueryResult<Docente>()

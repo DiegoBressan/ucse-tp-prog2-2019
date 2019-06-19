@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Implementacion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -49,9 +49,9 @@
       <Project>{afee4439-32ef-4973-b607-8432a2473f2e}</Project>
       <Name>Contratos</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WebApp\WebApp.csproj">
-      <Project>{d9bc8026-c7be-489a-a170-7d960dbdf8b4}</Project>
-      <Name>WebApp</Name>
+    <ProjectReference Include="..\Logica\Logica.csproj">
+      <Project>{12b8af30-6b46-400a-9416-9de921f19d54}</Project>
+      <Name>Logica</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

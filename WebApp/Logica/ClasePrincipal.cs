@@ -20,53 +20,51 @@ namespace Logica
         List<Clave> ListaClaves = new List<Clave>();
         List<Sala> ListaSalas = new List<Sala>();
 
-        /*
         public Respuesta CrearArchivos()
         {
             Respuesta NuevaRespuesta = new Respuesta(true, "");
 
-            if (File.Exists(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Docentes.txt"))
+            if (!File.Exists(@"C:\Users\David\Desktop\TP-Prog\Archivos\Docentes.txt"))
             {
-                File.Create(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Docentes.txt").Close();
+                File.Create(@"C:\Users\David\Desktop\TP-Prog\Archivos\Docentes.txt").Close();
             }
-            if (File.Exists(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Padres.txt"))
+            if (!File.Exists(@"C:\Users\David\Desktop\TP-Prog\Archivos\Padres.txt"))
             {
-                File.Create(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Padres.txt").Close();
+                File.Create(@"C:\Users\David\Desktop\TP-Prog\Archivos\Padres.txt").Close();
             }
-            if (File.Exists(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Hijos.txt"))
+            if (!File.Exists(@"C:\Users\David\Desktop\TP-Prog\Archivos\Hijos.txt"))
             {
-                File.Create(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Hijos.txt").Close();
+                File.Create(@"C:\Users\David\Desktop\TP-Prog\Archivos\Hijos.txt").Close();
             }
-            if (File.Exists(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Usuarios.txt"))
+            if (!File.Exists(@"C:\Users\David\Desktop\TP-Prog\Archivos\Usuarios.txt"))
             {
-                File.Create(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Usuarios.txt").Close();
+                File.Create(@"C:\Users\David\Desktop\TP-Prog\Archivos\Usuarios.txt").Close();
             }
-            if (File.Exists(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Directores.txt"))
+            if (!File.Exists(@"C:\Users\David\Desktop\TP-Prog\Archivos\Directores.txt"))
             {
-                File.Create(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Directores.txt").Close();
+                File.Create(@"C:\Users\David\Desktop\TP-Prog\Archivos\Directores.txt").Close();
             }
-            if (File.Exists(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Notas.txt"))
+            if (!File.Exists(@"C:\Users\David\Desktop\TP-Prog\Archivos\Notas.txt"))
             {
-                File.Create(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Notas.txt").Close();
+                File.Create(@"C:\Users\David\Desktop\TP-Prog\Archivos\Notas.txt").Close();
             }
-            if (File.Exists(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Claves.txt"))
+            if (!File.Exists(@"C:\Users\David\Desktop\TP-Prog\Archivos\Claves.txt"))
             {
-                File.Create(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Claves.txt").Close();
+                File.Create(@"C:\Users\David\Desktop\TP-Prog\Archivos\Claves.txt").Close();
             }
-            if (File.Exists(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Salas.txt"))
+            if (!File.Exists(@"C:\Users\David\Desktop\TP-Prog\Archivos\Salas.txt"))
             {
-                File.Create(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Salas.txt").Close();
+                File.Create(@"C:\Users\David\Desktop\TP-Prog\Archivos\Salas.txt").Close();
             }
             return NuevaRespuesta;
         }
-        */
 
 
         //----------------------------------USUARIOS-----------------------------------------------------------------
 
         public void GuardarUsuarios(List<Usuario> ListaUsuarios)
         {
-            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Usuarios.txt", false))
+            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\TP-Prog\Archivos\Usuarios.txt", false))
             {
                 escritura.Write(JsonConvert.SerializeObject(ListaUsuarios));
             }
@@ -74,7 +72,7 @@ namespace Logica
 
         public List<Usuario> LeerUsuarios()
         {
-            using(StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Usuarios.txt"))
+            using(StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\TP-Prog\Archivos\Usuarios.txt"))
             {
                 string contenido = lectura.ReadToEnd();
                 ListaUsuarios = JsonConvert.DeserializeObject<List<Usuario>>(contenido);
@@ -90,7 +88,7 @@ namespace Logica
 
         public void GuardarDocentes(List<Docente> ListaDocentes)
         {
-            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Docentes.txt", false))
+            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\TP-Prog\Archivos\Docentes.txt", false))
             {
                 escritura.Write(JsonConvert.SerializeObject(ListaDocentes));
             }
@@ -98,7 +96,7 @@ namespace Logica
 
         public List<Docente> LeerDocentes()
         {
-            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Docentes.txt"))
+            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\TP-Prog\Archivos\Docentes.txt"))
             {
                 string contenido = lectura.ReadToEnd();
                 ListaDocentes = JsonConvert.DeserializeObject<List<Docente>>(contenido);
@@ -114,7 +112,7 @@ namespace Logica
 
         public void GuardarPadres(List<Padre> ListaPadres)
         {
-            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Padres.txt", false))
+            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\TP-Prog\Archivos\Padres.txt", false))
             {
                 escritura.Write(JsonConvert.SerializeObject(ListaPadres));
             }
@@ -122,7 +120,7 @@ namespace Logica
 
         public List<Padre> LeerPadres()
         {
-            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Padres.txt"))
+            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\TP-Prog\Archivos\Padres.txt"))
             {
                 string contenido = lectura.ReadToEnd();
                 ListaPadres = JsonConvert.DeserializeObject<List<Padre>>(contenido);
@@ -138,7 +136,7 @@ namespace Logica
 
         public void GuardarHijos(List<Hijo> ListaHijos)
         {
-            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Hijos.txt", false))
+            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\TP-Prog\Archivos\Hijos.txt", false))
             {
                 escritura.Write(JsonConvert.SerializeObject(ListaHijos));
             }
@@ -146,7 +144,7 @@ namespace Logica
 
         public List<Hijo> LeerHijos()
         {
-            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Hijos.txt"))
+            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\TP-Prog\Archivos\Hijos.txt"))
             {
                 string contenido = lectura.ReadToEnd();
                 ListaHijos = JsonConvert.DeserializeObject<List<Hijo>>(contenido);
@@ -162,7 +160,7 @@ namespace Logica
 
         public void GuardarDirectores(List<Directora> ListaDirectores)
         {
-            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Directores.txt", false))
+            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\TP-Prog\Archivos\Directores.txt", false))
             {
                 escritura.Write(JsonConvert.SerializeObject(ListaDirectores));
             }
@@ -170,7 +168,7 @@ namespace Logica
 
         public List<Directora> LeerDirectores()
         {
-            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Directores.txt"))
+            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\TP-Prog\Archivos\Directores.txt"))
             {
                 string contenido = lectura.ReadToEnd();
                 ListaDirectores = JsonConvert.DeserializeObject<List<Directora>>(contenido);
@@ -186,7 +184,7 @@ namespace Logica
 
         public void GuardarNotas(List<Nota> ListaNotas)
         {
-            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Notas.txt", false))
+            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\TP-Prog\Archivos\Notas.txt", false))
             {
                 escritura.Write(JsonConvert.SerializeObject(ListaNotas));
             }
@@ -194,7 +192,7 @@ namespace Logica
 
         public List<Nota> LeerNotas()
         {
-            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Notas.txt"))
+            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\TP-Prog\Archivos\Notas.txt"))
             {
                 string contenido = lectura.ReadToEnd();
                 ListaNotas = JsonConvert.DeserializeObject<List<Nota>>(contenido);
@@ -210,7 +208,7 @@ namespace Logica
 
         public void GuardarClaves(List<Clave> ListaClaves)
         {
-            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Claves.txt", false))
+            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\TP-Prog\Archivos\Claves.txt", false))
             {
                 escritura.Write(JsonConvert.SerializeObject(ListaClaves));
             }
@@ -218,7 +216,7 @@ namespace Logica
 
         public List<Clave> LeerClaves()
         {
-            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Claves.txt"))
+            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\TP-Prog\Archivos\Claves.txt"))
             {
                 string contenido = lectura.ReadToEnd();
                 ListaClaves = JsonConvert.DeserializeObject<List<Clave>>(contenido);
@@ -234,7 +232,7 @@ namespace Logica
 
         public void GuardarSalas(List<Sala> ListaSalas)
         {
-            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Salas.txt", false))
+            using (StreamWriter escritura = new StreamWriter(@"C:\Users\David\Desktop\TP-Prog\Archivos\Salas.txt", false))
             {
                 escritura.Write(JsonConvert.SerializeObject(ListaSalas));
             }
@@ -242,7 +240,7 @@ namespace Logica
 
         public List<Sala> LeerSalas()
         {
-            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\David-TP Prog\Archivos\Salas.txt"))
+            using (StreamReader lectura = new StreamReader(@"C:\Users\David\Desktop\TP-Prog\Archivos\Salas.txt"))
             {
                 string contenido = lectura.ReadToEnd();
                 ListaSalas = JsonConvert.DeserializeObject<List<Sala>>(contenido);
@@ -705,7 +703,7 @@ namespace Logica
 
             if (usuarioLogueado.RolSeleccionado == Roles.Directora)
             {
-                var salasDocente = docente.Salas != null ? docente.Salas.ToList() : new List<Sala>();
+                var salasDocente = docente.Salas != null ? docente.Salas.ToList() : new List<Sala>() { };
 
                 if (salasDocente.Any(x => x.Id == sala.Id) == false)
                 {
@@ -900,7 +898,21 @@ namespace Logica
         
         public Sala[] ObtenerSalasPorInstitucion(UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            
+            Sala[] salita = null;
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora) //Si es director se retornan todas las salas
+            {
+                salita = ListaSalas.ToArray();
+            }
+            else
+            {
+                if (usuarioLogueado.RolSeleccionado == Roles.Docente) //Si es docente se retorna solo la sala correspondiente
+                {
+                    Docente docente = ListaDocentes.Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+                    salita = docente.Salas;
+                }
+            }
+            return salita;
         }
         
         public Hijo[] ObtenerPersonas(UsuarioLogueado usuarioLogueado)
@@ -1047,7 +1059,64 @@ namespace Logica
 
         public Resultado AltaNota(Nota nota, Sala[] salas, Hijo[] hijos, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            //Pregunto tiene permiso
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora || usuarioLogueado.RolSeleccionado == Roles.Docente)
+            {
+                LeerNotas();
+                LeerHijos();
+
+                Nota nuevaNota = nota;
+                if (ListaNotas != null)
+                {
+                    nuevaNota.Id = ListaNotas.Count() + 1;
+                }
+                else
+                {
+                    nuevaNota.Id = 1;
+                }
+
+                if (hijos != null)
+                {
+                    foreach (var hijo in hijos)
+                    {
+                        foreach (var alumno in ListaHijos)
+                        {
+                            if (hijo.Id == alumno.Id)
+                            {
+                                List<Nota> auxiliar = alumno.Notas.ToList();
+                                auxiliar.Add(nuevaNota);
+                                alumno.Notas = auxiliar.ToArray();
+
+                                nuevaNota.Id += 1;
+                            }
+                        }
+                    }
+                    GuardarHijos(ListaHijos);
+                }
+                else
+                {
+                    if (salas != null)
+                    {
+                        foreach (var sala in salas)
+                        {
+                            foreach (var alumno in ListaHijos)
+                            {
+                                if (sala.Id == alumno.Id)
+                                {
+                                    List<Nota> auxiliar = alumno.Notas.ToList();
+                                    auxiliar.Add(nuevaNota);
+                                    alumno.Notas = auxiliar.ToArray();
+
+                                    nuevaNota.Id += 1;
+                                }
+                            }
+                        }
+                        GuardarHijos(ListaHijos);
+                    }
+                }
+            }
+
+            return new Resultado();
         }
 
         public Resultado ResponderNota(Nota nota, Comentario nuevoComentario, UsuarioLogueado usuarioLogueado)

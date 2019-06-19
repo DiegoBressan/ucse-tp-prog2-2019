@@ -9,13 +9,14 @@ using System.Net.Mail;
 using WebApp.Controllers;
 using Contratos;
 using Mocks;
+using LogicaImplementar;
 
 namespace AnBem.WebApplication.Controllers
 {
     
     public class AlumnosController : BaseController
     {
-        private static IServicioWeb servicio = new MockService();
+        private static IServicioWeb servicio = new Implementacion();
         // GET: /Alumnos/
         [HttpGet]
         public async Task<ActionResult> Index()
