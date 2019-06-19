@@ -275,7 +275,7 @@ namespace Logica
                     Clave NuevaClave = new Clave();
                     NuevaClave.Id = directora.Id;
                     NuevaClave.Email = directora.Email;
-                    NuevaClave.Roles = new Roles2[] { Roles2.Directora };
+                    NuevaClave.Roles = new Roles[] { Roles.Directora };
 
                     LeerClaves();
                     ListaClaves.Add(NuevaClave); //Cargo la nueva clave generada
@@ -389,7 +389,7 @@ namespace Logica
                     Clave NuevaClave = new Clave();
                     NuevaClave.Id = docente.Id;
                     NuevaClave.Email = docente.Email;
-                    NuevaClave.Roles = new Roles2[] { Roles2.Docente };
+                    NuevaClave.Roles = new Roles[] { Roles.Docente };
 
                     LeerClaves();
                     ListaClaves.Add(NuevaClave); //Cargo la nueva clave generada
@@ -504,7 +504,7 @@ namespace Logica
                     Clave NuevaClave = new Clave();
                     NuevaClave.Id = padre.Id;
                     NuevaClave.Email = padre.Email;
-                    NuevaClave.Roles = new Roles2[] { Roles2.Padre };
+                    NuevaClave.Roles = new Roles[] { Roles.Padre };
 
                     LeerClaves();
                     ListaClaves.Add(NuevaClave); //Cargo la nueva clave generada
@@ -846,7 +846,51 @@ namespace Logica
 
         public UsuarioLogueado ObtenerUsuario(string email, string clave)
         {
-            throw new NotImplementedException();
+            //Comprueba que exista el usuario
+            Usuario usuario = ListaUsuarios.Where(x => x.Email == email).FirstOrDefault();
+            if (usuario != null)
+            {
+                Clave cclave = ListaClaves.Where(x => x.Email == email).FirstOrDefault();
+                if (cclave != null)
+                {
+                    if (cclave.ClaveIngreso == clave)
+                    {
+                        UsuarioLogueado logeado = new UsuarioLogueado();
+                        logeado.Apellido = usuario.Apellido;
+                        logeado.Email = email;
+                        logeado.Nombre = usuario.Nombre;
+                        logeado.Roles = cclave.Roles;
+
+                        //Pregunta que tipo de rol cumple para poder asignarlo
+                        if (logeado.Roles.Contains(Roles.Directora))
+                        {
+                            logeado.RolSeleccionado = Roles.Directora;
+                        }
+                        if (logeado.Roles.Contains(Roles.Docente))
+                        {
+                            logeado.RolSeleccionado = Roles.Docente;
+                        }
+                        if (logeado.Roles.Contains(Roles.Padre))
+                        {
+                            logeado.RolSeleccionado = Roles.Padre;
+                        }
+
+                        return logeado;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public Institucion[] ObtenerInstituciones()
@@ -861,12 +905,76 @@ namespace Logica
         
         public Hijo[] ObtenerPersonas(UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            //Primero se comprueba que permiso tiene para saber a que hijo/alumno se puede acceder. El hijo no tiene autorizacion
+            Hijo[] hijo = null;
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora) //Puede ver todos
+            {
+                hijo = ListaHijos.ToArray();
+            }
+
+            if (usuarioLogueado.RolSeleccionado == Roles.Docente) //Puede ver los de su sala
+            {
+                Docente docente = ListaDocentes.Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+                List<Hijo> listado = new List<Hijo>();
+                foreach (var sala in docente.Salas)
+                {
+                    foreach (var alumno in ListaHijos)
+                    {
+                        if (sala == alumno.Sala)
+                        {
+                            listado.Add(alumno);
+                        }
+                    }
+                }
+                hijo = listado.ToArray();
+            }
+
+            if (usuarioLogueado.RolSeleccionado == Roles.Padre) //Puede ver los del hijo
+            {
+                Padre padre = ListaPadres.Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+                if (padre.Hijos != null)
+                {
+                    hijo = padre.Hijos;
+                }
+            }
+
+            return hijo;
         }
 
         public Nota[] ObtenerCuadernoComunicaciones(int idPersona, UsuarioLogueado usuarioLogueado)
         {
-            throw new NotImplementedException();
+            //Primero se comprueba que permiso tiene para saber si puede tener acceso al cuadreno deseado. El hijo no tiene autorizacion
+
+            if (usuarioLogueado.RolSeleccionado == Roles.Directora) //Puede ver todos
+            {
+                Nota cuaderno = ListaNotas.Where(x => x.Id == idPersona).FirstOrDefault();
+            }
+
+            if (usuarioLogueado.RolSeleccionado == Roles.Docente) //Puede ver los de su sala
+            {
+                Docente docente = ListaDocentes.Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+                foreach (var sala in docente.Salas)
+                {
+                    if (sala.Id == idPersona)
+                    {
+                        Nota cuaderno = ListaNotas.Where(x => x.Id == idPersona).FirstOrDefault();
+                    }
+                }
+            }
+
+            if (usuarioLogueado.RolSeleccionado == Roles.Padre) //Puede ver los del hijo
+            {
+                Padre padre = ListaPadres.Where(x => x.Email == usuarioLogueado.Email).FirstOrDefault();
+                foreach (var hijo in padre.Hijos)
+                {
+                    if (hijo.Id == idPersona)
+                    {
+                        Nota cuaderno = ListaNotas.Where(x => x.Id == idPersona).FirstOrDefault();
+                    }
+                }
+            }
+                
+            return new Nota[0];
         }
 
         public Grilla<Directora> ObtenerDirectoras(UsuarioLogueado usuarioLogueado, int paginaActual, int totalPorPagina, string busquedaGlobal)

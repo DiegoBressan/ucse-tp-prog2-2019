@@ -7,18 +7,12 @@ using Contratos;
 
 namespace Logica
 {
-    public enum Roles2
-    {
-        Padre = 1,
-        Directora = 2,
-        Docente = 3
-    }
     public class Clave
     {
         public int Id { get; set; }
         public string ClaveIngreso { get; set; }
         public string Email { get; set; }
-        public Roles2[] Roles { get; set; }
+        public Roles[] Roles { get; set; }
 
 
         public Clave()
